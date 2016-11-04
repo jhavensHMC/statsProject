@@ -1,0 +1,263 @@
+---
+title: "libraryPrelim"
+author: "Jenn Havens"
+date: "November 3, 2016"
+output: html_document
+---
+
+```{r, eval=FALSE, echo=FALSE}
+
+
+headersLong <- c("MACAddress","Username","Campus","Role","DeviceName","Group","Folder","DeviceLocation","ConnectTime","ConnectDN","DisconnectTime","DisconnectDN","Duration","TotalTraffic(MB)","TotalTrafficIn(MB)","TotalTrafficOut(MB)","AvgUsage(Kbps)","AvgSignal(dBm)","AvgSignalQuality","Vendor","ConnectionMode","SSID","AOSDeviceType","DeviceType","Manufacturer","Model","OS","OSDetail")
+
+headersShort <- c("MACAddress","Username","Campus","Role","DeviceName","Group","Folder","DeviceLocation","ConnectTime","DisconnectTime","Duration","TotalTraffic(MB)","TotalTrafficIn(MB)","TotalTrafficOut(MB)","AvgUsage(Kbps)","AvgSignal(dBm)","AvgSignalQuality","Vendor","ConnectionMode","SSID","AOSDeviceType","DeviceType","Manufacturer","Model","OS","OSDetail")
+
+
+data201601 <- read.csv("~/2 Jr/Stats/Project/201601.csv", header=FALSE)
+names(data201601) <- headersShort
+
+
+
+head <- c("MACAddress","Username","Campus","Role","DeviceName","Group","Folder","DeviceLocation","CYear","CMonth","CDay","CHour","CMin", "CSec", "CWeekDay", "CYearDay", "ConnectDST","DisconnectTime","Duration","TotalTraffic(MB)","TotalTrafficIn(MB)","TotalTrafficOut(MB)","AvgUsage(Kbps)","AvgSignal(dBm)","AvgSignalQuality","Vendor","ConnectionMode","SSID","AOSDeviceType","DeviceType","Manufacturer","Model","OS","OSDetail")
+
+
+setwd("~/2 Jr/Stats/Project/rawWifi2016/rawWifi2016")
+dailyFiles = list.files(pattern="[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9].csv")
+
+tables <- lapply(dailyFiles, FUN = read.table, header = FALSE ,sep = "\t" )
+
+
+
+data.list <- lapply(dailyFiles, read.csv, header=F)
+libraryData <- do.call("rbind", data.list)
+names(libraryData) <- head
+
+libararyData <- do.call(rbind, lapply(dailyFiles, function(x) x[match(names(dailyFiles[[1]]), names(x))]))
+
+
+
+
+
+monthFiles = list.files(pattern="[0-9][0-9][0-9][0-9][0-9][0-9].csv", full=F)
+monthFilesRe <- paste("data", monthFiles, sep="")
+
+data.list <- lapply(monthFiles, read.csv, header=F)
+libraryData <- do.call("rbind", data.list)
+
+
+# for (i in 1:length(monthFiles)){
+#   length(monthFiles[i])
+# }
+
+
+# monthFiles <- c("q")
+# 
+# sapply(monthFiles,FUN=function(eachName){
+#       file.rename(from=eachName,to=sub(pattern="q",replacement="data",eachName))
+# })
+# 
+# 
+# paste("data", eachName, sep="")
+# sub(pattern="./",replacement="data",eachName)
+# lapply(monthFiles, file.rename, to=paste("data", from, sep=""))
+# 
+# 
+# for (i in 1:length(monthFiles)){
+#   length(monthFiles[i])
+# }
+#  
+
+
+libraryData <- do.call("rbind", data.list)
+
+
+# 
+# for (i in 1:length(files)) assign(paste("data", files[i], sep = ""), read.csv(files[i], header = F))
+# 
+# shortHeaders <- c()
+# longHeaders <- c()
+# for (i in 1:length(files)){
+#   if(length(names(data201601.csv))==26){
+#     names(data201601.csv) <- headersShort
+#     data201601.csv$"DisconnectDN" <- na
+#   } else{
+#     names(data201601.csv) <- headersLong
+#     }
+# 
+# }
+
+```
+
+
+```{r 2016, eval=FALSE, echo=FALSE}
+
+
+setwd("~/2 Jr/Stats/Project/rawWifi2016/rawWifi2016")
+
+data.list = lapply(list.files(pattern = "[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9].csv", full = TRUE), read.csv, header = FALSE)
+
+single.data.frame = do.call('rbind', data.list)
+colnames(single.data.frame) = c("MACAddress", "Username", "Campus", "Role", "AccessPt", "NA", "Folder", "DeviceLocation","ConnectTime", "DisconnectTime", "Duration", "TotalTraffic(MB)", "TotalTrafficIn(MB)",'TotalTrafficOut(MB)','AvgUsage(Kbps)','AvgSignal(dBm)','AvgSignalQuality','Vendor','ConnectionMode','SSID','AOSDeviceType','DeviceType','Manufacturer','Model','OS','OSDetail')
+
+```
+
+```{r, eval=FALSE, echo=FALSE}
+
+hist(startYear, col="blue", freq=F, main = "Year of Session Start", xlab = "Year")
+
+par(mfrow=c(1,2))
+
+
+hist(startMonth, col="blue", freq=F, main = "Month of Session Start", xlab = "Month")
+
+
+par(mfrow=c(1,1))
+
+hist(startDay, col="blue", freq=F, main = "Day of Session Start", xlab = "Day")
+plot(startDay~startMonth)
+
+par(mfrow=c(1,2))
+
+hist(startHours, col="blue", freq=F, main = "Hour of Session Start Time", xlab = "Hour")
+
+startTimes <- as.numeric(substr(libData$StartTime,1,2))*60+as.numeric(substr(libData$StartTime,4,5), sep="")
+hist(startTimes, col="blue", freq=F, main = "Time of Session Start Time", xlab = "From Midnight to Midnight in 15min increments", breaks =96, axes=F, ylab = "Density")
+
+endHours <- as.numeric(substr(libData$EndTime,1,2))
+hist(endHours, col="blue", freq=F, main = "Hour of Session End Time", xlab = "Hour")
+
+endTimes <- as.numeric(substr(libData$EndTime,1,2))*60+as.numeric(substr(libData$EndTime,4,5))
+hist(endTimes, col="blue", freq=F, main = "Time of Session End Time", xlab = "From Midnight to Midnight in 15min increments", breaks =96, axes=F, ylab = "Density")
+
+
+par(mfrow=c(1,1))
+
+hist(endTimes-startTimes, xlim=c(0, 500), breaks = 100, freq=F)
+
+par(mfrow=c(1,1))
+
+
+
+
+plot(libData$Campus, startTimes/60, ylab="start hour")
+TukeyHSD(aov(lm(startTimes~tolower(libData$Campus))))
+plot(libData$Campus, endTimes/60, ylab="end hour")
+TukeyHSD(aov(lm(endTimes~tolower(libData$Campus))))
+
+
+```
+
+```{r 2015dataImport}
+setwd("~/2 Jr/Stats/Project/rawWifi2015")
+
+data.list = lapply(list.files(pattern = "[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9].csv", full = TRUE), read.csv, header = FALSE)
+
+single.data.frame = do.call('rbind', data.list)
+colnames(single.data.frame) = c("MACAddress", "Username", "Campus", "Role", "AccessPt", "NA", "Folder", "DeviceLocation","ConnectTime", "DisconnectTime", "Duration", "TotalTraffic(MB)", "TotalTrafficIn(MB)",'TotalTrafficOut(MB)','AvgUsage(Kbps)','AvgSignal(dBm)','AvgSignalQuality','Vendor','ConnectionMode','SSID','AOSDeviceType','DeviceType','Manufacturer','Model','OS','OSDetail')
+
+
+```
+
+
+```{r 2015TimeAnalysis}
+
+libData <- single.data.frame
+
+startTimes <- libData$ConnectTime
+
+temp <- sapply(strsplit(substr(startTimes,1,10),"\\/"), `[`, 1)
+startMonth <- as.numeric(temp)
+
+temp2 <- sapply(strsplit(substr(startTimes,1,10),"\\/"), `[`, 2)
+startDay <- as.numeric(temp2)
+
+temp3 <- sapply(strsplit(substr(startTimes,1,10),"\\/"), `[`, 3)
+startYear <- as.numeric(gsub("\\s", "", temp3))
+
+tempTime <- sapply(strsplit(substr(startTimes,1,20),"\\s+"), `[`, 2)
+tempAP <- sapply(strsplit(substr(startTimes,1,20),"\\s+"), `[`, 3)
+
+fullTime <- paste(tempTime, tempAP, sep = " ")
+temp4 <- strptime(fullTime, "%I:%M %p" )
+temp5 <- sapply(strsplit(substr(temp4,1,20),"\\s+"), `[`, 2)
+
+temp6 <- sapply(strsplit(substr(temp5,1,10),"\\:"), `[`, 1)
+startHour <- as.numeric(temp6)
+
+temp7 <- sapply(strsplit(substr(temp5,1,10),"\\:"), `[`, 2)
+startMin <- as.numeric(temp7)
+
+startMinfromMid <- startHour*60+startMin
+
+
+#####
+
+
+endTimes <- libData$DisconnectTime
+
+temp <- sapply(strsplit(substr(endTimes,1,10),"\\/"), `[`, 1)
+endMonth <- as.numeric(temp)
+
+temp2 <- sapply(strsplit(substr(endTimes,1,10),"\\/"), `[`, 2)
+endDay <- as.numeric(temp2)
+
+temp3 <- sapply(strsplit(substr(endTimes,1,10),"\\/"), `[`, 3)
+endYear <- as.numeric(gsub("\\s", "", temp3))
+
+tempTime <- sapply(strsplit(substr(endTimes,1,20),"\\s+"), `[`, 2)
+tempAP <- sapply(strsplit(substr(endTimes,1,20),"\\s+"), `[`, 3)
+
+fullTime <- paste(tempTime, tempAP, sep = " ")
+temp4 <- strptime(fullTime, "%I:%M %p" )
+temp5 <- sapply(strsplit(substr(temp4,1,20),"\\s+"), `[`, 2)
+
+temp6 <- sapply(strsplit(substr(temp5,1,10),"\\:"), `[`, 1)
+endHour <- as.numeric(temp6)
+
+temp7 <- sapply(strsplit(substr(temp5,1,10),"\\:"), `[`, 2)
+endMin <- as.numeric(temp7)
+
+endMinfromMid <- endHour*60+endMin
+
+```
+
+```{r plots}
+
+hist(startMonth, col="blue", freq=F, main = "Month of Session Start", xlab = "Month")
+hist(startDay, col="blue", freq=F, main = "Day of Session Start", xlab = "Day")
+hist(startMin, col="blue", freq=F, main = "Min in hour of Session Start", xlab = "min")
+par(mfrow=c(1,2))
+hist(startHour, col="blue", freq=F, main = "Hour of Session Start", xlab = "Hour")
+hist(startMinfromMid, col="blue", freq=F, main = "Min from midnight of Session Start", xlab = "min")
+hist(endHour, col="blue", freq=F, main = "Hour of Session End", xlab = "Hour")
+hist(endMinfromMid, col="blue", freq=F, main = "Min from midnight of Session End", xlab = "min")
+
+par(mfrow=c(1,1))
+calcDuration <- endMinfromMid-startMinfromMid
+
+durationFirst <- sapply(strsplit(substr(libData$Duration,1,20),"\\s+"), `[`, 1)
+durationSecond <- sapply(strsplit(substr(libData$Duration,1,20),"\\s+"), `[`, 3)
+
+durationFirst[is.na(durationFirst)] <- 0
+durationSecond[is.na(durationSecond)] <- 0
+
+smallDuration <- as.numeric(subset(durationFirst, durationSecond == "0"))
+
+largeDuration <- as.numeric(subset(durationFirst, durationSecond != "0")) + 60*as.numeric(subset(durationFirst, durationSecond != "0"))
+
+totalDurations <- c(smallDuration, largeDuration)
+
+
+plot(c(calcDuration, totalDurations))
+
+
+
+```
+
+```{r 2015campusComparisons}
+
+#plot(libData$Campus, startMinfromMid/60, ylab="start hour") #well thast not practical
+#TukeyHSD(aov(lm(startMinfromMid~tolower(libData$Campus))))
+
+
+```

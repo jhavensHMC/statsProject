@@ -1,0 +1,129 @@
+---
+title: "ezproxy prelim analysis"
+author: "Jenn Havens"
+date: "November 2, 2016"
+output: html_document
+---
+
+
+```{r dataentry, echo=FALSE, eval=FALSE}
+ccl201512_report_hashed <- read.table("~/2 Jr/Stats/Project/ezproxy-20161101T202855Z/ezproxy/ccl201512_report_hashed.txt", quote="\"", comment.char="", na.strings=c("NA", "NoSession", "EndDate"))
+
+head <- c("Username" , "Campus"  ,  "StartDate", "StartTime" ,"EndDate" ,  "EndTime"  , "SessionId" ,"ipAdress" )
+names(ccl201512_report_hashed) <- head
+
+
+ezproxyData <- rbind(ccl201512_report_hashed, ccl201601_report_hashed, ccl201602_report_hashed, ccl201603_report_hashed, ccl201604_report_hashed, ccl201605_report_hashed, ccl201606_report_hashed, ccl201606_report_hashed)
+```
+
+
+
+```{r prelimAnalysis, echo=FALSE, eval=FALSE}
+ezproxyData <- read.delim("~/2 Jr/Stats/Project/ezproxyData")
+ezproxyData2016 <- subset(ezproxyData, substr(ezproxyData$StartDate,1,4)=="2016")
+ezproxyData2015 <- subset(ezproxyData, substr(ezproxyData$StartDate,1,4)=="2015")
+
+
+startYears <- as.numeric(paste(substr(ezproxyData$StartDate,1,4), sep=""))
+hist(startYears, col="blue", freq=F, main = "Year of Session Start", xlab = "Year")
+
+par(mfrow=c(1,2))
+
+startMonthDay <- as.numeric(paste(substr(ezproxyData$StartDate,6,7),substr(ezproxyData$StartDate,9,10), sep=""))
+hist(startMonthDay, col="blue", freq=F, main = "Date of Session Start", xlab = "Month, Day")
+
+startMonthDaySmoothed <- (100)*as.numeric(substr(ezproxyData$StartDate,6,7))+(100/31)*as.numeric(substr(ezproxyData$StartDate,9,10))
+hist(startMonthDaySmoothed, col="blue", freq=F, main = "Date of Session Start, smooted to acount for base 31 days", xlab = "Month, Day")
+
+startMonth <- as.numeric(paste(substr(ezproxyData$StartDate,6,7), sep=""))
+hist(startMonth, col="blue", freq=F, main = "Month of Session Start", xlab = "Month")
+
+start2016DaySmoothed <- (30)*as.numeric(substr(ezproxyData2016$StartDate,6,7))+as.numeric(substr(ezproxyData2016$StartDate,9,10))
+hist(start2016DaySmoothed, col="blue", freq=F, main = "Day in year of start session", xlab = "Day")
+
+start2015DaySmoothed <- (30)*as.numeric(substr(ezproxyData2015$StartDate,6,7))+as.numeric(substr(ezproxyData2015$StartDate,9,10))
+hist(start2015DaySmoothed, col="blue", freq=F, main = "Day in year of start session", xlab = "Day")
+
+par(mfrow=c(1,1))
+
+startDay <- as.numeric(paste(substr(ezproxyData$StartDate,9,10), sep=""))
+hist(startDay, col="blue", freq=F, main = "Day of Session Start", xlab = "Day")
+
+par(mfrow=c(1,2))
+
+startHours <- as.numeric(substr(ezproxyData$StartTime,1,2))
+hist(startHours, col="blue", freq=F, main = "Hour of Session Start Time", xlab = "Hour")
+
+startTimes <- as.numeric(substr(ezproxyData$StartTime,1,2))*60+as.numeric(substr(ezproxyData$StartTime,4,5), sep="")
+hist(startTimes, col="blue", freq=F, main = "Time of Session Start Time", xlab = "From Midnight to Midnight in 15min increments", breaks =96, axes=F, ylab = "Density")
+
+endHours <- as.numeric(substr(ezproxyData$EndTime,1,2))
+hist(endHours, col="blue", freq=F, main = "Hour of Session End Time", xlab = "Hour")
+
+endTimes <- as.numeric(substr(ezproxyData$EndTime,1,2))*60+as.numeric(substr(ezproxyData$EndTime,4,5))
+hist(endTimes, col="blue", freq=F, main = "Time of Session End Time", xlab = "From Midnight to Midnight in 15min increments", breaks =96, axes=F, ylab = "Density")
+
+
+par(mfrow=c(1,1))
+
+hist(endTimes-startTimes, xlim=c(0, 500), breaks = 100, freq=F)
+
+par(mfrow=c(1,1))
+
+plot(ezproxyData$Campus, startTimes/60, ylab="start hour")
+TukeyHSD(aov(lm(startTimes~tolower(ezproxyData$Campus))))
+plot(ezproxyData$Campus, endTimes/60, ylab="end hour")
+TukeyHSD(aov(lm(endTimes~tolower(ezproxyData$Campus))))
+
+```
+
+```{r prelimTimeAlysis, echo=FALSE}
+ezproxyData <- read.delim("~/2 Jr/Stats/Project/ezproxyData")
+ezproxyData2016 <- subset(ezproxyData, substr(ezproxyData$StartDate,1,4)=="2016")
+ezproxyData2015 <- subset(ezproxyData, substr(ezproxyData$StartDate,1,4)=="2015")
+
+startYears <- as.numeric(paste(substr(ezproxyData$StartDate,1,4), sep=""))
+startMonth <- as.numeric(paste(substr(ezproxyData$StartDate,6,7), sep=""))
+startDay <- as.numeric(paste(substr(ezproxyData$StartDate,9,10), sep=""))
+
+
+
+hist(startYears, col="blue", freq=F, main = "Year of Session Start", xlab = "Year")
+
+par(mfrow=c(1,2))
+
+
+
+temp <- strftime(ISOdate(startYears, startMonth, startDay), format = "%j")
+startMonthDay <- as.numeric(temp)
+
+hist(startMonthDay, col="blue", freq=F, main = "Date of Session Start", xlab = "Day in the Year")
+
+
+
+par(mfrow=c(1,1))
+
+hist(startDay, col="blue", freq=F, main = "Day of Session Start", xlab = "Day")
+
+par(mfrow=c(1,2))
+
+startHours <- as.numeric(substr(ezproxyData$StartTime,1,2))
+hist(startHours, col="blue", freq=F, main = "Hour of Session Start Time", xlab = "Hour")
+
+startTimes <- as.numeric(substr(ezproxyData$StartTime,1,2))*60+as.numeric(substr(ezproxyData$StartTime,4,5), sep="")
+hist(startTimes, col="blue", freq=F, main = "Time of Session Start Time", xlab = "From Midnight to Midnight in 15min increments", breaks =96, axes=F, ylab = "Density")
+
+endHours <- as.numeric(substr(ezproxyData$EndTime,1,2))
+hist(endHours, col="blue", freq=F, main = "Hour of Session End Time", xlab = "Hour")
+
+endTimes <- as.numeric(substr(ezproxyData$EndTime,1,2))*60+as.numeric(substr(ezproxyData$EndTime,4,5))
+hist(endTimes, col="blue", freq=F, main = "Time of Session End Time", xlab = "From Midnight to Midnight in 15min increments", breaks =96, axes=F, ylab = "Density")
+
+
+par(mfrow=c(1,1))
+
+hist(endTimes-startTimes, xlim=c(0, 500), breaks = 100, freq=F)
+
+par(mfrow=c(1,1))
+
+```
