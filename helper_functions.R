@@ -1,10 +1,36 @@
 
-getCollegePseudonyms <- function() {
-  # using an environment bc performance like a hash table
-  collegePseudonyms <- new.env()
-  
-  x <- c("cgu", "cmc", "cuc", "hmc", 
-         "kecksci", "kgi", "pitzer", "pomona", "scrippscollege")
+createCollegePseudonyms <- function() {
+  # these are the names we want
+  rightNames <- c("cgu", "cmc", "cuc", "hmc", "kecksci", "kgi", "pitzer", "pomona", "scrippscollege")
+  # creating a hash table of all possible college names
+  pseudonyms <- new.env(hash=TRUE, parent=emptyenv(), size=30L)
+  # known abbreviations
+  assign("claremontmckenna", "cmc", pseudonyms)
+  assign("cuc.claremont", "cuc", pseudonyms)
+  assign("keck", "kecksci", pseudonyms)
+  assign("ptz", "pitzer", pseudonyms)
+  assign("pit", "pitzer", pseudonyms)
+  assign("pom", "pomona", pseudonyms)
+  assign("scr", "scrippscollege", pseudonyms)
+  assign("-", "unknown", pseudonyms)
+  # all the correct names should map to themselves
+  lapply(1:length(rightNames), 
+         function(i) assign(rightNames[i], rightNames[i], pseudonyms))
+  return(pseudonyms)
+}
+pseudonyms <- createCollegePseudonyms()
+
+getCollegePseudonym <- function(collegeID) {
+  # all IDs should be lowercase
+  collegeID <- tolower(collegeID)
+  # remove .edu if present
+  collegeID <- unlist(strsplit(collegeID, ".edu"))
+  return(get(collegeID, pseudonyms))
+}
+
+getAllPseudonyms <- function(collegeNames) {
+  # apply this to the whole column of a data frame
+  unlist(lapply(collegeNames, getCollegePseudonym))
 }
 
 checkIfNoEndDate <- function(info) {
