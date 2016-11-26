@@ -1,0 +1,54 @@
+---
+title: "testing"
+author: "Jenn Havens"
+date: "November 26, 2016"
+output: html_document
+---
+
+```{r}
+
+onLocation = vector(length = 120686)
+
+
+
+
+for (i in 1:120686) {
+  if (substring(ezproxyData$ipAdress[i], 1, 8) == "134.173."){
+    loc <- as.numeric(substring(ezproxyData$ipAdress[i], 9, 11))
+    if (loc > 31 && loc < 64) {
+      onLocation[i] <- "hmc"
+    } else if (loc > 63 && loc < 96) {
+      onLocation[i] <- "pomona"
+    } else if (loc > 95 && loc < 104) {
+      onLocation[i] <- "kgi"
+    } else if (loc > 111 && loc < 124) {
+      onLocation[i] <- "pitzer"
+    } else if (loc > 123 && loc < 136) {
+      onLocation[i] <- "cuc"
+    } else if (loc > 139 && loc < 142) {
+      onLocation[i] <- "kecksci"
+    } else if (loc > 143 && loc < 160) {
+      onLocation[i] <- "scrippscollege"
+    } else if (loc > 159 && loc < 192) {
+      onLocation[i] <- "cmc"
+    } else if (loc > 223 && loc < 240) {
+      onLocation[i] <- "cgu"
+    } else if (loc > 7 && loc < 16) {
+      onLocation[i] <- "ClaremontSSID"
+    } else if (loc > 23 && loc < 32) {
+      onLocation[i] <- "ClaremontSSID"
+    } else if (loc > 191 && loc < 224) {
+      onLocation[i] <- "CINE"
+    } else if (loc > 243 && loc < 246) {
+      onLocation[i] <- "VPNinterior"
+    } else {
+      onLocation[i] <- "otherCampus"
+    } 
+  } else {
+    onLocation[i] <- "offCampus"
+  }
+}
+summary(data.frame(onLocation))
+ezproxyData$accessLocation <- data.frame(onLocation)
+
+```
