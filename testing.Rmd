@@ -7,10 +7,8 @@ output: html_document
 
 ```{r}
 
+#ezproxyData <- read.delim("~/2 Jr/Stats/Project/StatsProject/ezproxyData")
 onLocation = vector(length = 120686)
-
-
-
 
 for (i in 1:120686) {
   if (substring(ezproxyData$ipAdress[i], 1, 8) == "134.173."){
@@ -49,6 +47,92 @@ for (i in 1:120686) {
   }
 }
 summary(data.frame(onLocation))
-ezproxyData$accessLocation <- data.frame(onLocation)
 
+accessLocation <- data.frame(onLocation)
+
+ezproxyData$accessLocation <- accessLocation
+
+```
+
+```{r, durationByLocationsTime}
+#run ezyproxyPrelim first to get vectos
+
+
+library(rpart)
+tree1 <- rpart((endTimes-startTimes)~ezproxyData$Campus + ezproxyData$accessLocation[,1] + ezproxyData$StartTime)
+
+printcp(tree1) # display the results 
+plotcp(tree1) # visualize cross-validation results 
+summary(tree1) # detailed summary of splits
+
+# create additional plots 
+par(mfrow=c(1,2)) # two plots on one page 
+rsq.rpart(tree1) # visualize cross-validation results  	
+
+# plot tree 
+plot(tree1, uniform=TRUE, main="Regression Tree for Duration ")
+text(tree1, use.n=TRUE, all=TRUE, cex=.8)
+
+# create attractive postcript plot of tree 
+#post(tree1, title = "Regression Tree for Duration ")
+```
+
+```{r, durationByLocations}
+
+test2 <- anova(lm((endTimes-startTimes)~ezproxyData$Campus + ezproxyData$accessLocation[,1]))
+
+tree2 <- rpart((endTimes-startTimes)~ezproxyData$Campus + ezproxyData$accessLocation[,1])
+
+printcp(tree2) # display the results 
+plotcp(tree2) # visualize cross-validation results 
+summary(tree2) # detailed summary of splits
+
+# create additional plots 
+rsq.rpart(tree2) # visualize cross-validation results  	
+
+# plot tree 
+plot(tree2, uniform=TRUE, main="Regression Tree for Duration ")
+text(tree2, use.n=TRUE, all=TRUE, cex=.8)
+
+
+
+test2 <- aov((endTimes-startTimes)~ezproxyData$Campus + ezproxyData$accessLocation[,1])
+summary(test2)
+plot(test2$residuals~test2$fitted.values)
+plot((endTimes-startTimes)~ezproxyData$Campus + ezproxyData$accessLocation[,1])
+
+
+```
+
+
+```{r, timesByLocations}
+
+test3 <- anova(lm(startTimes~ezproxyData$Campus + ezproxyData$accessLocation[,1]))
+
+tree3 <- rpart(startTimes~ezproxyData$Campus + ezproxyData$accessLocation[,1])
+
+
+printcp(tree3) # display the results 
+plotcp(tree3) # visualize cross-validation results 
+summary(tree3) # detailed summary of splits
+
+# create additional plots 
+rsq.rpart(tree3) # visualize cross-validation results  	
+
+# plot tree 
+plot(tree3, uniform=TRUE, main="Regression Tree for StartTime ")
+text(tree3, use.n=TRUE, all=TRUE, cex=.8)
+
+
+```
+
+```{r, locations}
+
+tbl <- table(ezproxyData$accessLocation[,1],ezproxyData$Campus) 
+
+test4 <- chisq.test(tbl)
+
+summary(test4)
+
+barplot(tbl)
 ```
