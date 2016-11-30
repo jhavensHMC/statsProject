@@ -132,7 +132,28 @@ tbl <- table(ezproxyData$accessLocation[,1],ezproxyData$Campus)
 
 test4 <- chisq.test(tbl)
 
-summary(test4)
-
 barplot(tbl)
+
+barplot(tbl, legend.text = TRUE, col = c("blue", "red", "green", "purple", "orange", "black", "pink", "white", "turquoise4", "maroon", "darkolivegreen4", "goldenrod3", "deeppink2", "steelblue3"))
+
+barplot(rowSums(tbl, na.rm = FALSE, dims = 1))
+
+
+```
+
+
+```{r}
+homeHits <- c(1347+ 15, 3581, 2631, 917, 142, 1253, 1160, 11362, 993)
+
+offCampus <- c(27526+ 8, 5332, 683, 1453, 259, 6259, 4831, 7677, 4031)
+
+totalHits <- c(36060+23,15114,4209,7316, 500,9985, 12970,22509,12000 )
+
+differntCampus <- totalHits - offCampus - homeHits #anything on a campus that is not home
+
+
+onOffTbl <- rbind(offCampus, differntCampus, homeHits)
+
+barplot(onOffTbl, legend.text = c("Off Campus", "Different Campus", "Home Campus"), col =  c("darkolivegreen4", "goldenrod3", "steelblue3"))
+
 ```
