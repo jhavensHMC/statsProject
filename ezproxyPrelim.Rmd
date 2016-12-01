@@ -122,8 +122,20 @@ hist(endTimes, col="blue", freq=F, main = "Time of Session End Time", xlab = "Fr
 
 par(mfrow=c(1,1))
 
-hist(endTimes-startTimes, xlim=c(0, 500), breaks = 100, freq=F)
+hist(endTimes-startTimes, xlim=c(0, 500), breaks = 500, freq=T, main = "Duration")
 
 par(mfrow=c(1,1))
 
+plot(endTimes-startTimes~startTimes)
+
+```
+
+```{r}
+
+DurationHr <- (endTimes-startTimes)/60
+startTimeHr <- startTimes/60
+Ddata <- cbind(DurationHr, startTimeHr)
+plot(DurationHr~startTimeHr, ylim = c(1.5, 24), xlim=c(0,24), data=subset(Ddata, DurationHr > 0))
+
+points((24+DurationHr)~startTimeHr, data=subset(Ddata, DurationHr < 0))
 ```
