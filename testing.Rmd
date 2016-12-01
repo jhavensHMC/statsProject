@@ -79,7 +79,8 @@ text(tree1, use.n=TRUE, all=TRUE, cex=.8)
 
 ```{r, durationByLocations}
 
-test2 <- anova(lm((endTimes-startTimes)~ezproxyData$Campus + ezproxyData$accessLocation[,1]))
+kruskal.test((endTimes-startTimes)~ezproxyData$accessLocation[,1])
+kruskal.test((endTimes-startTimes)~ezproxyData$Campus)
 
 tree2 <- rpart((endTimes-startTimes)~ezproxyData$Campus + ezproxyData$accessLocation[,1])
 
@@ -107,8 +108,8 @@ plot((endTimes-startTimes)~ezproxyData$Campus + ezproxyData$accessLocation[,1])
 
 ```{r, timesByLocations}
 
-test3 <- anova(lm(startTimes~ezproxyData$Campus + ezproxyData$accessLocation[,1]))
-
+kruskal.test(startTimes~ezproxyData$accessLocation[,1])
+kruskal.test(startTimes~ezproxyData$Campus)
 tree3 <- rpart(startTimes~ezproxyData$Campus + ezproxyData$accessLocation[,1])
 
 
@@ -142,7 +143,7 @@ barplot(rowSums(tbl, na.rm = FALSE, dims = 1))
 ```
 
 
-```{r}
+```{r, homeOrNot}
 homeHits <- c(1347+ 15, 3581, 2631, 917, 142, 1253, 1160, 11362, 993)
 
 offCampus <- c(27526+ 8, 5332, 683, 1453, 259, 6259, 4831, 7677, 4031)
@@ -154,6 +155,10 @@ differntCampus <- totalHits - offCampus - homeHits #anything on a campus that is
 
 onOffTbl <- rbind(offCampus, differntCampus, homeHits)
 
+colnames(onOffTbl) <- c("cgu","cmc","cuc" ,"hmc", "kecksci", "kgi" ,"pitzer","pomona" ,        "scripps")
+
 barplot(onOffTbl, legend.text = c("Off Campus", "Different Campus", "Home Campus"), col =  c("darkolivegreen4", "goldenrod3", "steelblue3"))
+
+test5 <- chisq.test(onOffTbl)
 
 ```
